@@ -26,6 +26,7 @@
 Tools::copy('https://github.com/madef/PrestaShopMigration/archive/master.zip', _PS_ROOT_DIR_.'/download/migration.php');
 Tools::ZipExtract(_PS_ROOT_DIR_.'/download/migration.zip', _PS_MODULE_DIR_.'migration');
 
-require _PS_MODULE_DIR_.'migration/migration.php');
-$migration = new Migration->install();
+require _PS_MODULE_DIR_.'migration/migration.php';
+$migration = new Migration();
+$migration->install();
 
