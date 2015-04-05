@@ -199,5 +199,25 @@ class MigrationModule
 		$object->down();
 		$this->updateStatus($version, self::NOT_APPLIED);
 	}
+
+	/**
+	 * Return modules directory list
+	 *
+	 * @return array Modules Directory List
+	 */
+	public static function getModuleList()
+	{
+		$module_list = array();
+		$modules = scandir(_PS_MODULE_DIR_);
+		foreach ($modules as $name)
+		{
+			if (is_file(_PS_MODULE_DIR_.$name))
+				continue;
+			if (!Validate::isModuleName($name))
+				continue;
+			$module_list[] = $name;
+		}
+		return $module_list;
+	}
 }
 

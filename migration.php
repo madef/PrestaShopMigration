@@ -57,7 +57,7 @@ class Migration extends Module
 		if (!class_exists('MigrationModule'))
 			require _PS_MODULE_DIR_.'migration/classes/MigrationModule.php';
 
-		$modules = Module::getModulesDirOnDisk();
+		$modules = MigrationModule::getModuleList();
 		foreach ($modules as $module)
 		{
 			if (!Module::isInstalled($module))

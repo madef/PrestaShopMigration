@@ -74,26 +74,25 @@ try {
 				Message::note($argv[0].str_pad($commande, 30).': '.str_pad($message, 47));
 			break;
 		case 'list':
-			$modules = Module::getModulesOnDisk();
+			$modules = MigrationModule::getModuleList();
 			foreach ($modules as $module)
 			{
-				if ($module->installed && MigrationModule::getInstance($module->name)->hasVersionNotApplied())
-					Message::warning(str_pad($module->name, 35).': has one or more versions files not applied');
+				if (Module::isInstalled($module) && MigrationModule::getInstance($module)->hasVersionNotApplied())
+					Message::warning(str_pad($module, 35).': has one or more versions files not applied');
 			}
 			break;
 		case 'listall':
-			$modules = Module::getModulesOnDisk();
+			$modules = MigrationModule::getModuleList();
 			foreach ($modules as $module)
-				if ($module->installed)
+				if (Module::isInstalled($module))
 				{
-					$version = 'rrr';
-					if(MigrationModule::getInstance($module->name)->hasVersionNotApplied())
-						Message::warning(str_pad($module->name, 35).': has one or more versions files not applied');
+					if(MigrationModule::getInstance($module)->hasVersionNotApplied())
+						Message::warning(str_pad($module, 35).': has one or more versions files not applied');
 					else
-						Message::success(str_pad($module->name, 35).': all versions applied                      ');
+						Message::success(str_pad($module, 35).': all versions applied                      ');
 				}
 				else
-					Message::normal(str_pad($module->name, 35).': not installed');
+					Message::normal(str_pad($module, 35).': not installed');
 			break;
 		case 'show':
 			if (!isset($argv[2]))
