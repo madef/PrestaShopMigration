@@ -295,5 +295,15 @@ class MigrationModule
 		}
 		return $module_list;
 	}
+
+	/**
+	 * Get module name
+	 *
+	 * @return string module name
+	 */
+	public function getModuleName()
+	{
+		return $this->module;
+	}
 }
 
