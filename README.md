@@ -90,6 +90,8 @@ Shell scripts are installed in the directory "shell" on the root of PrestaShop. 
 $ php shell/migrate.php help
 ```
 
+![ScreenShot](/doc/shell.png)
+
 And for human
 --------------
 
