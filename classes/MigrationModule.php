@@ -60,6 +60,9 @@ class MigrationModule
 		$this->loadStatus();
 	}
 
+	/**
+	 * Load status of each versions using file .migration.status
+	 */
 	protected function loadStatus()
 	{
 		$this->status = array();
@@ -77,11 +80,22 @@ class MigrationModule
 		}
 	}
 
+	/**
+	 * Get the status of each version
+	 *
+	 * @return array
+	 */
 	public function getStatus()
 	{
 		return $this->status;
 	}
 
+	/**
+	 * Update a status into file .migration.status
+	 *
+	 * @param string $version version
+	 * @param string $status NOT APPLIED' or APPLIED
+	 */
 	protected function updateStatus($version, $status)
 	{
 		$this->status[$version] = $status;
@@ -92,6 +106,9 @@ class MigrationModule
 		@chmod($file, 0777);
 	}
 
+	/**
+	 * Load all versions available from directory migration
+	 */
 	protected function loadVersions()
 	{
 		$directory = _PS_MODULE_DIR_.$this->module.'/migration';
@@ -106,6 +123,13 @@ class MigrationModule
 		$this->versions = array_map(array($this, 'extractVersion'), $files);
 	}
 
+	/**
+	 * Form file name, retrieve the version
+	 *
+	 * @param string $file filename
+	 *
+	 * @return string version
+	 */
 	protected function extractVersion($file)
 	{
 		$directory = _PS_MODULE_DIR_.$this->module.'/migration';
@@ -113,11 +137,19 @@ class MigrationModule
 		return substr($file, $length, -4);
 	}
 
+	/**
+	 * Get all versions
+	 */
 	public function getVersions()
 	{
 		return $this->versions;
 	}
 
+	/**
+	 * Has version not applied?
+	 *
+	 * @return bool true if at least one version is not applied
+	 */
 	public function hasVersionNotApplied()
 	{
 		foreach ($this->getStatus() as $status)
@@ -127,11 +159,23 @@ class MigrationModule
 		return false;
 	}
 
+	/**
+	 * Check if a version exists
+	 *
+	 * @param string $version version
+	 *
+	 * @return bool true if the version exists
+	 */
 	protected function versionExists($version)
 	{
 		return in_array($version, $this->getVersions());
 	}
 
+	/**
+	 * Get the last version available
+	 *
+	 * @return string|null last version available
+	 */
 	public function getLastVersion()
 	{
 		$versions = $this->getVersions();
@@ -139,6 +183,9 @@ class MigrationModule
 		return $last_version;
 	}
 
+	/**
+	 * Apply all version not applied
+	 */
 	public function upgradeToLastVersion()
 	{
 		$last_version = $this->getLastVersion();
@@ -149,6 +196,12 @@ class MigrationModule
 		$this->upgradeToVersion($last_version);
 	}
 
+	/**
+	 * Apply all version not applied and lower or equal
+	 * than the version specify
+	 *
+	 * @param string $limit maximal version
+	 */
 	public function upgradeToVersion($limit)
 	{
 		if (!$this->versionExists($limit))
@@ -163,6 +216,12 @@ class MigrationModule
 		}
 	}
 
+	/**
+	 * Unapply all version applied and greater or equal
+	 * than the version specify
+	 *
+	 * @param string $limit minimal version
+	 */
 	public function downgradeToVersion($limit)
 	{
 		if (!$this->versionExists($limit) && $limit != null)
@@ -177,6 +236,13 @@ class MigrationModule
 		}
 	}
 
+	/**
+	 * Load the version class using version
+	 *
+	 * @param string $version version
+	 *
+	 * @return object instance of the version class
+	 */
 	protected function loadVersionClass($version)
 	{
 		$class = ucfirst($this->module).'Version'.$version;
@@ -186,6 +252,11 @@ class MigrationModule
 		return new $class();
 	}
 
+	/**
+	 * Apply a specific version
+	 *
+	 * @param string $version version
+	 */
 	public function apply($version)
 	{
 		$object = $this->loadVersionClass($version);
@@ -193,6 +264,11 @@ class MigrationModule
 		$this->updateStatus($version, self::APPLIED);
 	}
 
+	/**
+	 * Unapply a specific version
+	 *
+	 * @param string $version version
+	 */
 	public function unapply($version)
 	{
 		$object = $this->loadVersionClass($version);
