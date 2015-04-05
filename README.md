@@ -21,7 +21,7 @@ Migration can be implemented to your module simply by adding these lines in the 
 ```
 public function install()
 {
-	if (!$this->installMigrationModule();
+	if (!$this->installMigrationModule())
 		return false;
 
 	return parent::install();
@@ -29,7 +29,7 @@ public function install()
 
 public function uninstall()
 {
-	if (!$this->installMigrationModule();
+	if (!$this->installMigrationModule())
 		return false;
 
 	return parent::uninstall();
