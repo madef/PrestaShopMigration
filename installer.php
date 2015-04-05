@@ -23,8 +23,11 @@
  *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-Tools::copy('https://github.com/madef/PrestaShopMigration/archive/master.zip', _PS_ROOT_DIR_.'/download/migration.php');
-Tools::ZipExtract(_PS_ROOT_DIR_.'/download/migration.zip', _PS_MODULE_DIR_.'migration');
+Tools::copy('https://codeload.github.com/madef/PrestaShopMigration/zip/master', _PS_ROOT_DIR_.'/download/migration.zip');
+Tools::ZipExtract(_PS_ROOT_DIR_.'/download/migration.zip', _PS_MODULE_DIR_);
+rename(_PS_MODULE_DIR_.'PrestaShopMigration-master', _PS_MODULE_DIR_.'migration');
+unlink(_PS_ROOT_DIR_.'/download/migration.zip');
+unlink(_PS_ROOT_DIR_.'/download/migration_installer.php');
 
 require _PS_MODULE_DIR_.'migration/migration.php';
 $migration = new Migration();
