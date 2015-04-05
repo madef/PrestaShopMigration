@@ -29,6 +29,7 @@
  * @usage php shell/migrate.php: display help
  * @usage php shell/migrate.php list: list modules with migration to do
  * @usage php shell/migrate.php listall: list all modules
+ * @usage php shell/migrate.php listall <filter>: list all modules that match the filter
  * @usage php shell/migrate.php show <module>: display all version of a module
  * @usage php shell/migrate.php migrate <module>: migrate a module to the last version
  * @usage php shell/migrate.php migrate <module> <version>: migrate a module to the version specified
@@ -57,6 +58,7 @@ try {
 				'' => 'display help',
 				' list' => 'list modules with migration to do',
 				' listall' => 'list all modules',
+				' listall <filter>' => 'list all modules that match the filter',
 				' show <module>' => 'display all version of a module',
 				' migrate <module>' => 'migrate a module to the last version',
 				' migrate <module> <version>' => 'migrate a module to the version specified',
@@ -83,7 +85,14 @@ try {
 			break;
 		case 'listall':
 			$modules = MigrationModule::getModuleList();
+			if (isset($argv[2]))
+				$filter = $argv[2];
+			else
+				$filter = '.*';
 			foreach ($modules as $module)
+			{
+				if (!preg_match("/$filter/Usi", $module))
+					continue;
 				if (Module::isInstalled($module))
 				{
 					if(MigrationModule::getInstance($module)->hasVersionNotApplied())
@@ -93,6 +102,7 @@ try {
 				}
 				else
 					Message::normal(str_pad($module, 35).': not installed');
+			}
 			break;
 		case 'show':
 			if (!isset($argv[2]))
