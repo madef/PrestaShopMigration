@@ -42,15 +42,17 @@ public function installMigrationModule()
 		// Install Migration module
 		if (!file_exists(_PS_MODULE_DIR_.'migration'))
 		{
-			Tools::copy('https://raw.githubusercontent.com/madef/PrestaShopMigration/master/installer.php', _PS_ROOT_DIR_.'/download/migration_installer.php');
+			if (!Tools::copy('https://raw.githubusercontent.com/madef/PrestaShopMigration/master/installer.php', _PS_ROOT_DIR_.'/download/migration_installer.php'))
+				throw new Exception('Installer was not copied');
 			require _PS_ROOT_DIR_.'/download/migration_installer.php';
 		}
 	}
 	catch (Exception $e)
 	{
-		$this->context->controller->errors[] = $this->l('Error during the installation of the module "migration"');
+		$this->context->controller->errors[] = sprintf($this->l('The module "%1s" require the module "migration". Please, <a href=%2s>donwload</a> and install it first.'), $this->name, '"http://migration.prestashop.madef.fr/last_release.zip"');
 		return false;
 	}
+	return true;
 }
 ```
 
