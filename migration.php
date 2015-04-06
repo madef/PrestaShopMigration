@@ -28,6 +28,7 @@ if (!defined('_PS_VERSION_'))
 
 class Migration extends Module
 {
+	public static $processModuleUpdateLock = false;
 	public function __construct()
 	{
 		$this->name = 'migration';
@@ -48,6 +49,11 @@ class Migration extends Module
 
 	public function processModuleUpdate()
 	{
+		if (self::$processModuleUpdateLock)
+			return;
+
+		self::$processModuleUpdateLock = true;
+
 		if (!($this->context->controller instanceof AdminModulesController))
 			return;
 

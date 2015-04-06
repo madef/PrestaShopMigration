@@ -28,7 +28,7 @@ if (!defined('_PS_VERSION_'))
 
 interface MigrationInterface
 {
-	public function up();
-	public function down();
+	public function up($module);
+	public function down($module);
 }
 

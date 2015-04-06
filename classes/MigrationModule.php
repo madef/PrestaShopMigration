@@ -34,6 +34,7 @@ class MigrationModule
 	const APPLIED = 'APPLIED';
 
 	static $instances = array();
+	static $module_list = array();
 	protected $module;
 	protected $versions;
 	protected $status;
@@ -160,6 +161,18 @@ class MigrationModule
 	}
 
 	/**
+	 * Check if a version is applied
+	 *
+	 * @param string $version version
+	 *
+	 * @return bool true if the version is applied
+	 */
+	protected function isVersionApplied($version)
+	{
+		return $this->status[$version] === self::APPLIED;
+	}
+
+	/**
 	 * Check if a version exists
 	 *
 	 * @param string $version version
@@ -259,8 +272,12 @@ class MigrationModule
 	 */
 	public function apply($version)
 	{
+		if ($this->isVersionApplied($version))
+			return;
+
 		$object = $this->loadVersionClass($version);
-		$object->up();
+		$module = Module::getInstanceByName($this->module);
+		$object->up($module);
 		$this->updateStatus($version, self::APPLIED);
 	}
 
@@ -271,8 +288,12 @@ class MigrationModule
 	 */
 	public function unapply($version)
 	{
+		if (!$this->isVersionApplied($version))
+			return;
+
 		$object = $this->loadVersionClass($version);
-		$object->down();
+		$module = Module::getInstanceByName($this->module);
+		$object->down($module);
 		$this->updateStatus($version, self::NOT_APPLIED);
 	}
 
@@ -283,17 +304,19 @@ class MigrationModule
 	 */
 	public static function getModuleList()
 	{
-		$module_list = array();
-		$modules = scandir(_PS_MODULE_DIR_);
-		foreach ($modules as $name)
+		if (empty(self::$module_list))
 		{
-			if (is_file(_PS_MODULE_DIR_.$name))
-				continue;
-			if (!Validate::isModuleName($name))
-				continue;
-			$module_list[] = $name;
+			$modules = scandir(_PS_MODULE_DIR_);
+			foreach ($modules as $name)
+			{
+				if (is_file(_PS_MODULE_DIR_.$name))
+					continue;
+				if (!Validate::isModuleName($name))
+					continue;
+				self::$module_list[] = $name;
+			}
 		}
-		return $module_list;
+		return self::$module_list;
 	}
 
 	/**
